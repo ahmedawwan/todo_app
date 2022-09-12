@@ -122,7 +122,6 @@ class TasksScreen extends StatelessWidget {
       ),
     );
   }
-
   showModal(context) {
     showModalBottomSheet<void>(
       context: context,
