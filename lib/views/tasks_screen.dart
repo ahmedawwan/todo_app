@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:state_management_examples/widgets/bottom_sheet.dart';
 import 'package:state_management_examples/widgets/tasks_list.dart';
 
 import '../models/tasks_model.dart';
+import '../providers/task_provider.dart';
 
 class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key});
@@ -23,6 +25,9 @@ class _TasksScreenState extends State<TasksScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // =======================================================================
+      // Floating action button that opens a bottom modal sheet
+      // =======================================================================
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet<void>(
@@ -31,13 +36,6 @@ class _TasksScreenState extends State<TasksScreen> {
             builder: (BuildContext context) {
               return BottomSheetContent(
                 addTaskController: addTaskController,
-                addTask: () {
-                  if (addTaskController.text.isNotEmpty) {
-                    tasks.add(TaskModel(title: addTaskController.text.trim()));
-                    setState(() {});
-                  }
-                  Navigator.pop(context);
-                },
               );
             },
           );
@@ -93,7 +91,7 @@ class _TasksScreenState extends State<TasksScreen> {
                     // Sub Heading
                     // =================================================================
                     Text(
-                      '12 Tasks',
+                      '${Provider.of<TaskProvider>(context).taskCount} Tasks',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -124,7 +122,7 @@ class _TasksScreenState extends State<TasksScreen> {
                     ),
                   ],
                 ),
-                child: TasksList(tasks: tasks),
+                child: TasksList(),
               ),
             ),
           ],

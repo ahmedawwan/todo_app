@@ -1,10 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:state_management_examples/providers/task_provider.dart';
 
 class BottomSheetContent extends StatelessWidget {
-  const BottomSheetContent({super.key, required this.addTaskController, required this.addTask});
-
+  const BottomSheetContent({super.key, required this.addTaskController});
   final TextEditingController addTaskController;
-  final Function addTask;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +56,12 @@ class BottomSheetContent extends StatelessWidget {
             // Button
             // =============================================================
             GestureDetector(
-              onTap: () =>addTask(),
+              onTap: () {
+                log(addTaskController.text.trim());
+                Provider.of<TaskProvider>(context, listen: false)
+                    .addTask(addTaskController.text.trim());
+                Navigator.pop(context);
+              },
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 50, vertical: 30),
                 height: 60,
@@ -73,6 +80,4 @@ class BottomSheetContent extends StatelessWidget {
       ),
     );
   }
-
-
 }

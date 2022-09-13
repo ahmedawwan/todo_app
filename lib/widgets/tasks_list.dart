@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:state_management_examples/providers/task_provider.dart';
 import 'package:state_management_examples/widgets/task_item.dart';
 
-import '../models/tasks_model.dart';
-
 class TasksList extends StatefulWidget {
-  const TasksList({super.key, required this.tasks});
- final List<TaskModel> tasks;
+  const TasksList({super.key});
 
   @override
   State<TasksList> createState() => _TasksListState();
@@ -14,19 +13,25 @@ class TasksList extends StatefulWidget {
 class _TasksListState extends State<TasksList> {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      physics: NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-      itemCount: widget.tasks.length,
-      itemBuilder: (context, index) => TaskItem(
-        taskTitle: widget.tasks[index].title!,
-        isChecked: widget.tasks[index].isDone!,
-        checkboxCallback: () {
-          setState(() {
-            widget.tasks[index].toggleIsDone();
+    return Consumer<TaskProvider>(builder: (context, taskData, child) {
+      return ListView.builder(
+          physics: NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+          itemCount: taskData.tasks.length,
+          itemBuilder: (context, index) {
+            final task = taskData.tasks[index];
+
+            return TaskItem(
+              taskTitle: task.title!,
+              isChecked: task.isDone!,
+              checkboxCallback: () {
+                taskData.updateTask(task);
+              },
+              longPressCallback: () {
+                taskData.deleteTask(task);
+              },
+            );
           });
-        },
-      ),
-    );
+    });
   }
 }
