@@ -23,10 +23,9 @@ migrate_working_dir/
 
 
 # folder to ignore
-windows/
-macos/
-linux/
-web/
+build/
+.dart_tool/
+
 
 # Flutter/Dart/Pub related
 **/doc/api/
