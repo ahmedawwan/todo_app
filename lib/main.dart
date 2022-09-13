@@ -9,8 +9,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: TasksScreen(),
       theme: ThemeData(
-          primaryColor: Colors.lightBlueAccent,
-          scaffoldBackgroundColor: Colors.lightBlueAccent),
+        primaryColor: Colors.lightBlueAccent,
+        scaffoldBackgroundColor: Colors.lightBlueAccent,
+      ),
     );
   }
 }

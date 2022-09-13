@@ -1,31 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:state_management_examples/widgets/bottom_sheet.dart';
+import 'package:state_management_examples/widgets/tasks_list.dart';
 
-// ignore: must_be_immutable
-class TasksScreen extends StatelessWidget {
-  TasksScreen({super.key});
+import '../models/tasks_model.dart';
 
-  List<Map<String, dynamic>>? listMapTasks = [
-    {
-      'title': 'Task number 1',
-      'isDone': false,
-    },
-    {
-      'title': 'Task number 2',
-      'isDone': false,
-    },
-    {
-      'title': 'Task number 3',
-      'isDone': false,
-    },
-  ];
+class TasksScreen extends StatefulWidget {
+  const TasksScreen({super.key});
 
+  @override
+  State<TasksScreen> createState() => _TasksScreenState();
+}
+
+class _TasksScreenState extends State<TasksScreen> {
   TextEditingController addTaskController = TextEditingController();
+
+  List<TaskModel> tasks = [
+    TaskModel(title: 'This is task one'),
+    TaskModel(title: 'This is task two'),
+    TaskModel(title: 'This is task three'),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () => showModal(context),
+        onPressed: () {
+          showModalBottomSheet<void>(
+            isScrollControlled: true,
+            context: context,
+            builder: (BuildContext context) {
+              return BottomSheetContent(
+                addTaskController: addTaskController,
+                addTask: () {
+                  if (addTaskController.text.isNotEmpty) {
+                    tasks.add(TaskModel(title: addTaskController.text.trim()));
+                    setState(() {});
+                  }
+                  Navigator.pop(context);
+                },
+              );
+            },
+          );
+        },
         child: Icon(Icons.add),
         elevation: 0,
         backgroundColor: Colors.lightBlueAccent,
@@ -108,13 +124,7 @@ class TasksScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-                  itemCount: listMapTasks?.length ?? 0,
-                  itemBuilder: (context, index) =>
-                      taskItem(context, listMapTasks![index]),
-                ),
+                child: TasksList(tasks: tasks),
               ),
             ),
           ],
@@ -122,107 +132,6 @@ class TasksScreen extends StatelessWidget {
       ),
     );
   }
-  showModal(context) {
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.5,
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          color: Colors.white,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                // =============================================================
-                // Heading
-                // =============================================================
-                Text(
-                  'Add Task',
-                  style: TextStyle(
-                    fontSize: 40,
-                    color: Colors.lightBlueAccent,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                // =============================================================
-                // Text Field
-                // =============================================================
-                TextField(
-                  controller: addTaskController,
-                  textAlign: TextAlign.center,
-                  cursorColor: Colors.lightBlueAccent,
-                  decoration: InputDecoration(
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(width: 3, color: Colors.lightBlueAccent),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(width: 3, color: Colors.lightBlueAccent),
-                    ),
-                    border: UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(width: 3, color: Colors.lightBlueAccent),
-                    ),
-                  ),
-                ),
-                // =============================================================
-                // Button
-                // =============================================================
-                GestureDetector(
-                  onTap: () {
-                    if (addTaskController.text.isNotEmpty)
-                      addTask(addTaskController.text.trim(), context);
-                  },
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 30),
-                    height: 60,
-                    width: double.infinity,
-                    color: Colors.lightBlueAccent,
-                    child: Center(
-                      child: Text(
-                        'Add',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
 
-  void addTask(String task, context) {
-    listMapTasks?.add({'title': task, 'isDone': false});
-    (context as Element).markNeedsBuild();
-    Navigator.pop(context);
-  }
-
-  ListTile taskItem(context, Map<String, dynamic> item) {
-    return ListTile(
-      title: Text(
-        item['title'],
-        style: TextStyle(
-            decoration: item['isDone']
-                ? TextDecoration.lineThrough
-                : TextDecoration.none,
-            fontSize: 14,
-            color: Colors.black,
-            fontWeight: FontWeight.w600),
-      ),
-      trailing: Checkbox(
-        activeColor: Colors.lightBlueAccent,
-        value: item['isDone'],
-        onChanged: (bool? val) {
-          item['isDone'] = val ?? false;
-          (context as Element).markNeedsBuild();
-        },
-      ),
-    );
-  }
+  showModal(context) {}
 }
